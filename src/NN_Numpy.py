@@ -7,7 +7,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
-
 X_train = pd.read_csv("../data/raw/train.csv")
 X_train = X_train.drop(columns="label")
 y_train = pd.read_csv("../data/raw/train.csv", usecols=["label"])
@@ -124,6 +123,28 @@ class FCLayer():
         return dj_dx
 
 class utils():
+    def preprocess_input(X_data, target_size=784):
+        # Ensure input is a NumPy array
+        if isinstance(X_data, pd.DataFrame):
+            X_data = X_data.values
+        elif isinstance(X_data, list):
+            X_data = np.array(X_data, dtype=np.float32)
+        
+        # Ensure data is of type float32
+        X_data = X_data.astype(np.float32)
+        
+        n_samples, original_features = X_data.shape
+        if original_features < target_size:
+            # Pad with zeros if input size is smaller than the target
+            padding = target_size - original_features
+            X_data = np.pad(X_data, ((0, 0), (0, padding)), mode='constant', constant_values=0)
+        elif original_features > target_size:
+            # Truncate if input size is larger than the target
+            X_data = X_data[:, :target_size]
+        
+        return X_data
+    
+    
     @staticmethod
     # Function to display an image
     def show_image(image, title=None):
@@ -173,7 +194,7 @@ for epoch in range(epochs):
 X_val_processed = utils.preprocess_input(X_val)
 
 # Convert to NumPy for the NumPy model
-X_val_processed_np = X_val_processed.cpu().numpy()
+X_val_processed_np = X_val_processed
 
 # Forward pass on validation set
 val_outputs = model.forward(X_val)
@@ -199,10 +220,5 @@ sample = X_val.iloc[index].values  # Access the data row as a NumPy array
 # Reshape to 28x28 for visualization
 image = sample.reshape(28, 28)
 
-
-
 # Display the image
 utils.show_image(image, title=f"Original Input Image at index {index}")
-
-
-
