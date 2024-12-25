@@ -93,5 +93,5 @@ target/
 /models/
 
 # exclude data from source control by default
-/data/
-!data/.gitkeep
+data/raw/*
+!data/raw/.gitkeep
