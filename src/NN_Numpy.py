@@ -6,14 +6,6 @@ import pandas as pd
 
 import matplotlib.pyplot as plt
 
-from PIL import Image
-
-import idx2numpy
-
-import math
-
-import torch
-import torch.nn as nn
 
 
 X_train = pd.read_csv("../data/raw/train.csv")
@@ -132,22 +124,6 @@ class FCLayer():
         return dj_dx
 
 class utils():
-    @staticmethod
-    def preprocess_input(X_data, target_size=784):
-        # Ensure input is a PyTorch tensor
-        if isinstance(X_data, pd.DataFrame):
-            X_data = torch.tensor(X_data.values, dtype=torch.float32)
-
-        n_samples, original_features = X_data.shape
-        if original_features < target_size:
-            # Pad with zeros if input size is smaller than the target
-            padding = target_size - original_features
-            X_data = torch.nn.functional.pad(X_data, (0, padding), mode='constant', value=0)
-        elif original_features > target_size:
-            # Truncate if input size is larger than the target
-            X_data = X_data[:, :target_size]
-        return X_data
-    
     @staticmethod
     # Function to display an image
     def show_image(image, title=None):
