@@ -6,10 +6,14 @@ import pandas as pd
 
 import matplotlib.pyplot as plt
 
+import os 
 
-X_train = pd.read_csv("../data/raw/train.csv")
+
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
+X_train = pd.read_csv(os.path.join(script_dir, "../data/raw/train.csv"))
 X_train = X_train.drop(columns="label")
-y_train = pd.read_csv("../data/raw/train.csv", usecols=["label"])
+y_train = pd.read_csv(os.path.join(script_dir,"../data/raw/train.csv"), usecols=["label"])
 
 # Split train.csv into train and validation sets
 X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=42)
@@ -147,10 +151,20 @@ class utils():
     
     @staticmethod
     # Function to display an image
-    def show_image(image, title=None):
+    def show_image(image, title=None, subtitle=None):
         plt.imshow(image, cmap="gray")
+        
         if title:
-            plt.title(title)
+            plt.title(title, fontsize=14, y=1.02)  # Main title above the image
+        
+        if subtitle:
+            plt.text(
+                0.5, -0.1, subtitle, 
+                fontsize=12, color="black", 
+                ha="center", va="center", 
+                transform=plt.gca().transAxes  # Position relative to the axes
+            )
+        
         plt.axis("off")
         plt.show()
 
@@ -221,4 +235,4 @@ sample = X_val.iloc[index].values  # Access the data row as a NumPy array
 image = sample.reshape(28, 28)
 
 # Display the image
-utils.show_image(image, title=f"Original Input Image at index {index}")
+utils.show_image(image, title=f"Original Input Image at index {index}", subtitle=f"Predicted class: {predicted_class}")
